@@ -17,7 +17,7 @@ Endpoints:
 """
 
 from __future__ import annotations
-from database import create_conversation, add_message, get_user_conversations, get_conversation_history, update_conversation_title
+from database import create_conversation, add_message, get_user_conversations, get_conversation_history, update_conversation_title, delete_conversation
 import uuid
 
 
@@ -385,3 +385,8 @@ def list_conversations(user_id: str):
 def get_conversation(conversation_id: str):
     return get_conversation_history(conversation_id)
 
+
+@app.delete("/api/conversations/{conversation_id}")
+def delete_conversation_endpoint(conversation_id: str):
+    delete_conversation(conversation_id)
+    return {"status": "success", "deleted": conversation_id}

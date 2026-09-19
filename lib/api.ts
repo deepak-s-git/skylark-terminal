@@ -82,3 +82,15 @@ export async function getConversationMessages(convId: string): Promise<ChatMessa
   if (!res.ok) return []
   return res.json()
 }
+
+export async function deleteConversation(conversationId: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_URL}/api/conversations/${conversationId}`, {
+      method: 'DELETE'
+    })
+    return res.ok
+  } catch (error) {
+    console.error("Failed to delete conversation:", error)
+    return false
+  }
+}

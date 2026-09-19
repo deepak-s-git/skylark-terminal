@@ -104,3 +104,11 @@ def get_conversation_history(conversation_id: str) -> List[Dict]:
 
 # Initialize DB on import
 init_db()
+
+def delete_conversation(conversation_id: str):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM messages WHERE conversation_id = ?", (conversation_id,))
+    cursor.execute("DELETE FROM conversations WHERE id = ?", (conversation_id,))
+    conn.commit()
+    conn.close()

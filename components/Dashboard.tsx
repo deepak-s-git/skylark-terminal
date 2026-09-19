@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { sendMessage, getHealth, getConversations, getConversationMessages, type ChatMessage, type HealthStatus, type QualityReport, type ConversationHistory } from '@/lib/api'
+import { sendMessage, getHealth, getConversations, getConversationMessages, deleteConversation, type ChatMessage, type HealthStatus, type QualityReport, type ConversationHistory } from '@/lib/api'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import gsap from 'gsap'
@@ -127,6 +127,18 @@ export default function Dashboard() {
   const handlePromptClick = (text: string) => {
     setSidebarOpen(false)
     handleSubmit(undefined, text)
+  }
+
+
+  const handleDeleteConversation = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    const success = await deleteConversation(id)
+    if (success) {
+      setConversations(prev => prev.filter(c => c.id !== id))
+      if (activeConvId === id) {
+        startNewChat()
+      }
+    }
   }
 
   const startNewChat = () => {
@@ -283,10 +295,21 @@ export default function Dashboard() {
                 <div 
                   key={c.id} 
                   onClick={() => loadConversation(c.id)}
-                  className={`p-3 border-b border-bordercol/30 cursor-pointer hover:bg-titanium transition-colors ${activeConvId === c.id ? 'bg-titanium border-l-2 border-l-chartreuse' : ''}`}
+                  className={`group flex items-center justify-between p-3 border-b border-bordercol/30 cursor-pointer hover:bg-titanium transition-colors ${activeConvId === c.id ? 'bg-titanium border-l-2 border-l-chartreuse' : ''}`}
                 >
-                  <div className="font-mono text-[10px] text-ghost truncate">{c.title}</div>
-                  <div className="font-mono text-[8px] text-darkMuted mt-1">{new Date(c.created_at).toLocaleDateString()}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-mono text-[10px] text-ghost truncate pr-2">{c.title}</div>
+                    <div className="font-mono text-[8px] text-darkMuted mt-1">{new Date(c.created_at).toLocaleDateString()}</div>
+                  </div>
+                  <button 
+                    onClick={(e) => handleDeleteConversation(e, c.id)}
+                    className="opacity-0 group-hover:opacity-100 p-1.5 text-slateMuted hover:text-vermilion transition-all bg-vanta border border-transparent hover:border-vermilion/50 rounded-sm"
+                    title="Delete Conversation"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
                 </div>
               ))}
             </div>

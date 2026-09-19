@@ -1,14 +1,11 @@
 'use client'
 
 const SUGGESTED = [
-  "What is our current pipeline value?",
-  "How is the Mining sector performing?",
-  "What's our win rate across all sectors?",
-  "Give me a leadership update",
-  "Are won deals turning into work orders?",
-  "Which sectors have the most active work orders?",
-  "What's the completion rate for work orders?",
-  "Show me sector performance comparison",
+  "Generate a complete leadership update. Show me the full pipeline value, won revenue, and operations telemetry.",
+  "Give me a detailed breakdown of the active sales pipeline. I want to see our current stages and probability distribution.",
+  "Compare won deals against operations work orders. Show me the exact cross-board match rate and unmapped deals.",
+  "Analyze the financial health of our Work Orders. Give me a breakdown of contract value versus billed and collected.",
+  "Run a strict data quality audit. How many deals are missing monetary values, and how many work orders lack a status?",
 ]
 
 interface Props {
@@ -28,7 +25,7 @@ export default function SuggestedQuestions({ onSelect, disabled }: Props) {
             key={q}
             onClick={() => onSelect(q)}
             disabled={disabled}
-            className="rounded-full border border-slate-700 bg-slate-800/60 px-3 py-1.5 text-xs text-slate-300 hover:border-blue-500 hover:bg-blue-900/30 hover:text-blue-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="rounded-full border border-bordercol bg-vanta px-3 py-1.5 text-[10px] text-slateMuted hover:border-chartreuse hover:text-chartreuse font-mono uppercase tracking-wider transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {q}
           </button>

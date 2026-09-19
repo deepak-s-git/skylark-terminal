@@ -75,3 +75,23 @@ The LLM formats this as a readable briefing document, not a raw data dump. All n
 5. **Conversation memory.** Currently, history is sent back in each request. A persistent session store (PostgreSQL) would enable multi-day conversation context.
 6. **SSE streaming.** Once the core pipeline is proven reliable, add token-level streaming for a more responsive feel.
 7. **Alert detection.** Proactively flag: deals stuck in a stage too long, work orders overdue against probable end date, sectors with declining win rates.
+
+## Post-Launch Architectural Upgrades (Version 2.0)
+
+**LLM Engine Migration (Gemini -> Groq/OpenAI compatible)**
+Due to strict API quota limits on the free Gemini tier during extensive UI testing, the intent router and narration composer were migrated to use the `openai` Python SDK pointed at Groq's high-speed inference endpoints (`gpt-oss-120b`). 
+*Technical detail:* Addressed a severe Python 3.13 / `httpx` decompression bug by explicitly forcing `Accept-Encoding: identity` headers to prevent the backend from crashing on gzipped AI responses.
+
+**Generative UI (The AutoDashboard Engine)**
+The initial frontend relied on a static, monolithic React grid that rendered the same components regardless of the query. This was entirely replaced with a true **Generative UI engine** built on `Recharts`. 
+*   **Dynamic Parsing:** The `<AutoDashboard />` component recursively walks the arbitrary JSON matrix returned by the backend. It maps flat numbers to dense KPI grids, string arrays to custom lists, and object matrices to Bar/Pie charts automatically at runtime.
+*   **Aggressive Visualizer:** To ensure that non-financial queries (like Data Quality audits) still produce charts, the engine detects dictionaries consisting solely of numeric values and dynamically synthesizes a `BarChart` comparing them.
+
+**Recharts Infinite Loop Resolution**
+Generative charts inside Next.js introduced a notorious React loop (`Maximum update depth exceeded`) because dynamic arrays and inline styles triggered infinite `ResizeObserver` cycles inside the `<ResponsiveContainer>`. This was resolved comprehensively by heavily memoizing (`useMemo`) the parsed chart data and hoisting volatile inline CSS styles to static constants.
+
+**Persistent Conversation Memory & Chat History**
+The stateless chat implementation was upgraded to use a persistent SQLite database (`history.db`). The frontend now reliably tracks active sessions, enabling context-aware multi-turn conversations and the ability to selectively delete old sessions via a new `DELETE /api/conversations/{id}` endpoint.
+
+**Brutalist Markdown Table Formatting**
+The AI composer often outputs tabular data for unmatched deals or missing sectors. `react-markdown` was enhanced with `remark-gfm` to intercept raw markdown tables (`| Header | Data |`) and automatically map them to brutalist HTML tables matching the terminal aesthetic (Chartreuse/Vanta colors with strict mono typography).

@@ -12,7 +12,7 @@ import os
 from dataclasses import dataclass
 from typing import Optional, Literal
 
-import google.generativeai as genai
+from openai import OpenAI
 
 from agent.prompts import INTENT_EXTRACTION_SYSTEM, INTENT_EXTRACTION_USER
 
@@ -33,32 +33,32 @@ class QueryIntent:
     clarification_question: Optional[str] = None
 
 
-def _configure_gemini():
-    api_key = os.environ.get("GEMINI_API_KEY", "")
+def _get_groq_client():
+    api_key = os.environ.get("GROQ_API_KEY", "")
     if not api_key:
-        raise ValueError("GEMINI_API_KEY environment variable is not set.")
-    genai.configure(api_key=api_key)
-    return genai.GenerativeModel(
-        "gemini-3.6-flash",
-        generation_config=genai.GenerationConfig(
-            temperature=0.0,  # deterministic for intent extraction
-            response_mime_type="application/json",
-        ),
-        system_instruction=INTENT_EXTRACTION_SYSTEM,
-    )
+        raise ValueError("GROQ_API_KEY environment variable is not set.")
+    return OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
 
 
 def extract_intent(question: str) -> QueryIntent:
     """
-    Use Gemini to parse a founder question into a structured QueryIntent.
+    Use Groq to parse a founder question into a structured QueryIntent.
     Falls back to a safe default (leadership_update) if parsing fails.
     """
-    model = _configure_gemini()
-    prompt = INTENT_EXTRACTION_USER.format(question=question)
-
     try:
-        response = model.generate_content(prompt)
-        raw = response.text.strip()
+        client = _get_groq_client()
+        prompt = INTENT_EXTRACTION_USER.format(question=question)
+
+        response = client.chat.completions.create(
+            model="llama3-70b-8192",
+            messages=[
+                {"role": "system", "content": INTENT_EXTRACTION_SYSTEM},
+                {"role": "user", "content": prompt}
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.0
+        )
+        raw = response.choices[0].message.content.strip()
 
         # Extract JSON even if there's surrounding text
         json_match = re.search(r"\{.*\}", raw, re.DOTALL)

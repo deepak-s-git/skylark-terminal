@@ -9,3 +9,4 @@ pydantic>=2.7.0
 pytest>=8.2.0
 pytest-mock>=3.14.0
 responses>=0.25.0
+openai>=1.30.0

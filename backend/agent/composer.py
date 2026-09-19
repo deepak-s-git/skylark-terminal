@@ -10,25 +10,18 @@ import json
 import logging
 import os
 
-import google.generativeai as genai
+from openai import OpenAI
 
 from agent.prompts import RESPONSE_COMPOSITION_SYSTEM, RESPONSE_COMPOSITION_USER
 
 logger = logging.getLogger(__name__)
 
 
-def _configure_gemini():
-    api_key = os.environ.get("GEMINI_API_KEY", "")
+def _get_groq_client():
+    api_key = os.environ.get("GROQ_API_KEY", "")
     if not api_key:
-        raise ValueError("GEMINI_API_KEY environment variable is not set.")
-    genai.configure(api_key=api_key)
-    return genai.GenerativeModel(
-        "gemini-3.6-flash",
-        generation_config=genai.GenerationConfig(
-            temperature=0.3,  # slight creativity for natural prose
-        ),
-        system_instruction=RESPONSE_COMPOSITION_SYSTEM,
-    )
+        raise ValueError("GROQ_API_KEY environment variable is not set.")
+    return OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
 
 
 def compose_response(question: str, analytics_result: dict, caveats: list[str]) -> str:
@@ -38,8 +31,6 @@ def compose_response(question: str, analytics_result: dict, caveats: list[str]) 
     Returns plain markdown text.
     Falls back to a structured JSON dump if LLM fails.
     """
-    model = _configure_gemini()
-
     # Serialize the result, keeping it readable
     result_json = json.dumps(analytics_result, indent=2, default=str)
     caveats_text = "\n".join(f"- {c}" for c in caveats) if caveats else "No significant data quality issues."
@@ -51,8 +42,16 @@ def compose_response(question: str, analytics_result: dict, caveats: list[str]) 
     )
 
     try:
-        response = model.generate_content(prompt)
-        return response.text.strip()
+        client = _get_groq_client()
+        response = client.chat.completions.create(
+            model="llama3-70b-8192",
+            messages=[
+                {"role": "system", "content": RESPONSE_COMPOSITION_SYSTEM},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.3
+        )
+        return response.choices[0].message.content.strip()
     except Exception as e:
         logger.error(f"Response composition failed: {e}")
         # Fallback: return a minimal structured response

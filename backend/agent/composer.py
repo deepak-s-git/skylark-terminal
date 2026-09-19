@@ -21,7 +21,7 @@ def _get_groq_client():
     api_key = os.environ.get("GROQ_API_KEY", "")
     if not api_key:
         raise ValueError("GROQ_API_KEY environment variable is not set.")
-    return OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
+    return OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1", default_headers={"Accept-Encoding": "identity"})
 
 
 def compose_response(question: str, analytics_result: dict, caveats: list[str]) -> str:

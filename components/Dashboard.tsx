@@ -9,6 +9,7 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GlowingEffect } from "@/components/GlowingEffect"
+import { DataQualityWidget, SectorPerformanceWidget, CrossBoardWidget } from "./DynamicWidgets"
 
 
 gsap.registerPlugin(useGSAP)
@@ -478,6 +479,16 @@ export default function Dashboard() {
             </div>
 
             {metrics && (
+              <>
+                {metrics.deals && metrics.work_orders && !metrics.pipeline && (
+                  <div className="w-full mb-6"><DataQualityWidget metrics={metrics} /></div>
+                )}
+                {metrics.sectors && !metrics.pipeline && (
+                  <div className="w-full mb-6"><SectorPerformanceWidget metrics={metrics} /></div>
+                )}
+                {metrics.sector_comparison && !metrics.pipeline && (
+                  <div className="w-full mb-6"><CrossBoardWidget metrics={metrics} /></div>
+                )}
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
                 
                 {/* HERO CARD: Pipeline or Revenue */}
@@ -843,6 +854,7 @@ export default function Dashboard() {
                 )}
 
               </div>
+              </>
             )}
           </motion.main>
         )}

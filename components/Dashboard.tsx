@@ -321,10 +321,11 @@ export default function Dashboard() {
         {sidebarView === 'prompts' && (
           <div className="flex-1 overflow-y-auto custom-scrollbar w-[260px] p-4 flex flex-col gap-3">
             {[
-              "Stop sugarcoating it and give me a brutal leadership update.",
-              "Analyze the revenue pipeline strictly for the Enterprise sector.",
-              "Run a complete data quality audit across both boards.",
-              "What is our cross-board conversion rate? Are we actually invoicing the deals sales claims we've won?"
+              "Generate a complete leadership update. Show me the full pipeline value, won revenue, and operations telemetry.",
+              "Give me a detailed breakdown of the active sales pipeline. I want to see our current stages and probability distribution.",
+              "Compare won deals against operations work orders. Show me the exact cross-board match rate and unmapped deals.",
+              "Analyze the financial health of our Work Orders. Give me a breakdown of contract value versus billed and collected.",
+              "Run a strict data quality audit. How many deals are missing monetary values, and how many work orders lack a status?",
             ].map((prompt, i) => (
               <button 
                 key={i}

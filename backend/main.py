@@ -126,35 +126,25 @@ def _run_analytics(intent: QueryIntent, deals_df: pd.DataFrame,
     deals_quality = _cache.get("boards", {}).get("deals_quality")
     wo_quality = _cache.get("boards", {}).get("wo_quality")
     
-    # Always compute the baseline so the UI is never empty
     from analytics.engine import generate_leadership_update, pipeline_metrics, revenue_metrics, sector_performance, work_order_metrics, cross_board_conversion, data_quality_summary
     
-    baseline = generate_leadership_update(deals_df, wo_df, deals_quality, wo_quality)
-    result = baseline.copy() # Start with the full dashboard data
-    
-    # ALWAYS inject data quality into the baseline so the dashboard is 100% full at all times
-    from analytics.engine import data_quality_summary
-    dq_specific = data_quality_summary(deals_quality, wo_quality)
-    result["result"]["data_quality"] = dq_specific["result"]
-
-    # If the user asked a specific question, overwrite that specific section with filtered data
-    if intent.intent == "pipeline_metrics":
-        specific = pipeline_metrics(deals_df, sector=sector, date_range=date_range)
-        result["result"]["pipeline"] = specific["result"]
+    # Run ONLY the specific intent to power the dynamic generative UI
+    if intent.intent == "leadership_update":
+        result = generate_leadership_update(deals_df, wo_df, deals_quality, wo_quality)
+    elif intent.intent == "pipeline_metrics":
+        result = pipeline_metrics(deals_df, sector=sector, date_range=date_range)
     elif intent.intent == "revenue_metrics":
-        specific = revenue_metrics(deals_df, sector=sector, date_range=date_range)
-        result["result"]["revenue"] = specific["result"]
+        result = revenue_metrics(deals_df, sector=sector, date_range=date_range)
     elif intent.intent == "sector_performance":
-        specific = sector_performance(deals_df, date_range=date_range)
-        result["result"]["sector_performance"] = specific["result"]
+        result = sector_performance(deals_df, date_range=date_range)
     elif intent.intent == "work_order_metrics":
-        specific = work_order_metrics(wo_df, sector=sector, date_range=date_range)
-        result["result"]["work_orders"] = specific["result"]
+        result = work_order_metrics(wo_df, sector=sector, date_range=date_range)
     elif intent.intent == "cross_board_conversion":
-        specific = cross_board_conversion(deals_df, wo_df, sector=sector)
-        result["result"]["cross_board"] = specific["result"]
+        result = cross_board_conversion(deals_df, wo_df, sector=sector)
     elif intent.intent == "data_quality":
-        pass # Already attached globally above
+        result = data_quality_summary(deals_quality, wo_quality)
+    else:
+        result = generate_leadership_update(deals_df, wo_df, deals_quality, wo_quality)
 
     caveats = result.get("metadata", {}).get("caveats", [])
     return result, caveats

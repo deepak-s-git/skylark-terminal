@@ -74,6 +74,7 @@ export default function Dashboard() {
   const [conversations, setConversations] = useState<ConversationHistory[]>([])
   const [activeConvId, setActiveConvId] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Initialize UUID
   useEffect(() => {
@@ -116,6 +117,11 @@ export default function Dashboard() {
     setSidebarOpen(false)
   }
   
+  
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
   const startNewChat = () => {
     setActiveConvId(null)
     setMessages([])
@@ -270,7 +276,7 @@ export default function Dashboard() {
 
         {/* CHAT LOG */}
         <div className="flex-1 overflow-y-auto custom-scrollbar relative flex justify-center w-full">
-          <div className={`w-full max-w-3xl flex flex-col ${messages.length === 0 ? 'justify-center items-center' : 'justify-end'} min-h-full p-4 md:p-6 transition-all duration-1000 ${!hasQueried ? 'border-x border-bordercol/40 bg-[#060608]' : ''}`}>
+          <div className={`w-full max-w-3xl flex flex-col ${messages.length === 0 ? 'justify-center items-center' : 'justify-start'} min-h-full p-4 md:p-6 transition-all duration-1000 ${!hasQueried ? 'border-x border-bordercol/40 bg-[#060608]' : ''}`}>
             
             {/* INITIAL BOOT SEQUENCE */}
             {!hasQueried && messages.length === 0 && (

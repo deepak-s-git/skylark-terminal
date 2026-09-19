@@ -1,7 +1,14 @@
 import React from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
 
+
 const COLORS = ['#D1F53B', '#FF4444', '#888888', '#444444', '#EEEEEE'];
+const CHART_MARGIN = { top: 5, right: 5, left: -20, bottom: 5 };
+const TICK_STYLE = { fill: '#888', fontSize: 10 };
+const TOOLTIP_CURSOR = { fill: '#222' };
+const TOOLTIP_STYLE = { backgroundColor: '#111', border: '1px solid #333', fontSize: '10px' };
+const LEGEND_STYLE = { fontSize: '10px', paddingTop: '10px' };
+
 
 export const AutoDashboard = ({ data }: { data: any }) => {
   const kpis: { label: string; value: any }[] = [];
@@ -83,11 +90,11 @@ export const AutoDashboard = ({ data }: { data: any }) => {
               </div>
               <div className="flex-1 min-h-0 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={chart.data} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
-                    <XAxis dataKey={chart.xKey} stroke="#444" tick={{fill: '#888', fontSize: 10}} />
-                    <YAxis stroke="#444" tick={{fill: '#888', fontSize: 10}} tickFormatter={(val) => val > 1000000 ? `${(val/10000000).toFixed(1)}Cr` : val} />
-                    <Tooltip cursor={{fill: '#222'}} contentStyle={{backgroundColor: '#111', border: '1px solid #333', fontSize: '10px'}} />
-                    <Legend wrapperStyle={{fontSize: '10px', paddingTop: '10px'}} />
+                  <BarChart data={chart.data} margin={CHART_MARGIN}>
+                    <XAxis dataKey={chart.xKey} stroke="#444" tick={TICK_STYLE} />
+                    <YAxis stroke="#444" tick={TICK_STYLE} tickFormatter={(val) => val > 1000000 ? `${(val/10000000).toFixed(1)}Cr` : val} />
+                    <Tooltip cursor={TOOLTIP_CURSOR} contentStyle={TOOLTIP_STYLE} />
+                    <Legend wrapperStyle={LEGEND_STYLE} />
                     {chart.yKeys.map((yk, idx) => (
                       <Bar key={yk} dataKey={yk} fill={COLORS[idx % COLORS.length]} name={yk.replace(/_/g, ' ').toUpperCase()} />
                     ))}

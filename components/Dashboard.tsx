@@ -479,7 +479,7 @@ export default function Dashboard() {
             </div>
 
             {metrics && (
-              <div className="w-full h-full pb-10">
+              <div className="w-full min-h-full pb-10">
                 <AutoDashboard data={metrics} />
               </div>
             )}

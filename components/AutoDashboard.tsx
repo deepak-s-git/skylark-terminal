@@ -72,7 +72,7 @@ export const AutoDashboard = ({ data }: { data: any }) => {
   }
 
   return (
-    <div className="w-full h-full flex flex-col gap-6 fade-in">
+    <div className="w-full flex flex-col gap-6 fade-in">
       {kpis.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-3">
           {kpis.map((kpi, i) => (
@@ -86,7 +86,7 @@ export const AutoDashboard = ({ data }: { data: any }) => {
       )}
 
       {charts.length > 0 && (
-        <div className={`grid grid-cols-1 ${charts.length > 1 ? 'xl:grid-cols-2' : ''} gap-6 flex-1 min-h-[300px]`}>
+        <div className={`grid grid-cols-1 ${charts.length > 1 ? 'xl:grid-cols-2' : ''} gap-6`}>
           {charts.map((chart, i) => (
             <div key={i} className="bento-card bg-titanium border border-bordercol p-6 h-[320px] flex flex-col relative group hover:border-slateMuted transition-colors">
               <div className="text-[10px] text-chartreuse font-mono uppercase mb-4 tracking-widest truncate">

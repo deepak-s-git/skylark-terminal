@@ -50,7 +50,7 @@ def extract_intent(question: str) -> QueryIntent:
         prompt = INTENT_EXTRACTION_USER.format(question=question)
 
         response = client.chat.completions.create(
-            model="llama3-70b-8192",
+            model="openai/gpt-oss-120b",
             messages=[
                 {"role": "system", "content": INTENT_EXTRACTION_SYSTEM},
                 {"role": "user", "content": prompt}

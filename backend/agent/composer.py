@@ -44,7 +44,7 @@ def compose_response(question: str, analytics_result: dict, caveats: list[str]) 
     try:
         client = _get_groq_client()
         response = client.chat.completions.create(
-            model="llama3-70b-8192",
+            model="openai/gpt-oss-120b",
             messages=[
                 {"role": "system", "content": RESPONSE_COMPOSITION_SYSTEM},
                 {"role": "user", "content": prompt}

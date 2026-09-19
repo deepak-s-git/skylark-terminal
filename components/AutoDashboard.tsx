@@ -47,8 +47,14 @@ export const AutoDashboard = ({ data }: { data: any }) => {
           } else if (value.length > 0 && typeof value[0] === 'string') {
             l.push({ title: label, items: value });
           }
-        } else if (typeof value === 'object') {
-          parseData(value, label);
+        } else if (value !== null && typeof value === 'object') {
+          const isNumericDict = Object.keys(value).length > 0 && Object.values(value).every(v => typeof v === 'number');
+          if (isNumericDict) {
+            const arr = Object.entries(value).map(([k, v]) => ({ name: k, value: v }));
+            c.push({ title: label, data: arr, xKey: 'name', yKeys: ['value'] });
+          } else {
+            parseData(value, label);
+          }
         }
       });
     };
@@ -68,12 +74,12 @@ export const AutoDashboard = ({ data }: { data: any }) => {
   return (
     <div className="w-full h-full flex flex-col gap-6 fade-in">
       {kpis.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-3">
           {kpis.map((kpi, i) => (
-            <div key={i} className="bento-card bg-titanium border border-bordercol p-5 hover:border-slateMuted transition-colors relative overflow-hidden group">
+            <div key={i} className="bento-card bg-titanium border border-bordercol p-3 hover:border-slateMuted transition-colors relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-1 h-full bg-bordercol group-hover:bg-chartreuse transition-colors"></div>
-              <div className="text-[10px] text-slateMuted font-mono uppercase mb-3 truncate pl-2">{kpi.label}</div>
-              <div className="text-2xl md:text-3xl font-mono text-ghost truncate pl-2">{kpi.value}</div>
+              <div className="text-[8px] text-slateMuted font-mono uppercase mb-1 truncate pl-2" title={kpi.label}>{kpi.label}</div>
+              <div className="text-lg md:text-xl font-mono text-ghost truncate pl-2">{kpi.value}</div>
             </div>
           ))}
         </div>

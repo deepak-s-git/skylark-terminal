@@ -412,7 +412,19 @@ export default function Dashboard() {
                       <div className="font-mono text-xs font-bold">Error: {msg.content}</div>
                     ) : (
                       <div className="prose-chat font-sans text-sm">
-                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        <ReactMarkdown 
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            table: ({node, ...props}) => <div className="overflow-x-auto my-4 w-full"><table className="w-full border-collapse border border-bordercol text-[10px] md:text-[11px]" {...props} /></div>,
+                            thead: ({node, ...props}) => <thead className="bg-titanium border-b border-bordercol" {...props} />,
+                            th: ({node, ...props}) => <th className="p-2 text-left text-chartreuse uppercase tracking-widest border-r border-bordercol last:border-r-0 font-bold" {...props} />,
+                            td: ({node, ...props}) => <td className="p-2 border-t border-r border-bordercol last:border-r-0 text-slateMuted" {...props} />,
+                            a: ({node, ...props}) => <a className="text-vermilion hover:underline" {...props} />,
+                            p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />
+                          }}
+                        >
+                          {msg.content}
+                        </ReactMarkdown>
                       </div>
                     )}
                   </div>

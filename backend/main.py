@@ -116,30 +116,42 @@ def _run_analytics(intent: QueryIntent, deals_df: pd.DataFrame,
                    wo_df: pd.DataFrame) -> tuple[dict, list[str]]:
     """
     Dispatch to the correct deterministic analytics function based on intent.
+    ALWAYS compute a baseline 'leadership_update' so the frontend dashboard is always fully populated.
+    The specific intent's results override or augment the baseline.
     Returns (result_dict, caveats_list).
     """
     sector = intent.sector
     date_range = intent.date_range
 
+    deals_quality = _cache.get("boards", {}).get("deals_quality")
+    wo_quality = _cache.get("boards", {}).get("wo_quality")
+    
+    # Always compute the baseline so the UI is never empty
+    from analytics.engine import generate_leadership_update, pipeline_metrics, revenue_metrics, sector_performance, work_order_metrics, cross_board_conversion, data_quality_summary
+    
+    baseline = generate_leadership_update(deals_df, wo_df, deals_quality, wo_quality)
+    result = baseline.copy() # Start with the full dashboard data
+
+    # If the user asked a specific question, overwrite that specific section with filtered data
     if intent.intent == "pipeline_metrics":
-        result = pipeline_metrics(deals_df, sector=sector, date_range=date_range)
+        specific = pipeline_metrics(deals_df, sector=sector, date_range=date_range)
+        result["result"]["pipeline"] = specific["result"]
     elif intent.intent == "revenue_metrics":
-        result = revenue_metrics(deals_df, sector=sector, date_range=date_range)
+        specific = revenue_metrics(deals_df, sector=sector, date_range=date_range)
+        result["result"]["revenue"] = specific["result"]
     elif intent.intent == "sector_performance":
-        result = sector_performance(deals_df, date_range=date_range)
+        specific = sector_performance(deals_df, date_range=date_range)
+        result["result"]["sector_performance"] = specific["result"]
     elif intent.intent == "work_order_metrics":
-        result = work_order_metrics(wo_df, sector=sector, date_range=date_range)
+        specific = work_order_metrics(wo_df, sector=sector, date_range=date_range)
+        result["result"]["work_orders"] = specific["result"]
     elif intent.intent == "cross_board_conversion":
-        result = cross_board_conversion(deals_df, wo_df, sector=sector)
+        specific = cross_board_conversion(deals_df, wo_df, sector=sector)
+        result["result"]["cross_board"] = specific["result"]
     elif intent.intent == "data_quality":
-        deals_quality = _cache.get("boards", {}).get("deals_quality")
-        wo_quality = _cache.get("boards", {}).get("wo_quality")
-        result = data_quality_summary(deals_quality, wo_quality)
-    else:
-        # leadership_update — fetch fresh quality reports from cache
-        deals_quality = _cache.get("boards", {}).get("deals_quality")
-        wo_quality = _cache.get("boards", {}).get("wo_quality")
-        result = generate_leadership_update(deals_df, wo_df, deals_quality, wo_quality)
+        specific = data_quality_summary(deals_quality, wo_quality)
+        # We must attach deals and work_orders quality data to the result
+        result["result"]["data_quality"] = specific["result"]
 
     caveats = result.get("metadata", {}).get("caveats", [])
     return result, caveats

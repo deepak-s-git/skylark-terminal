@@ -747,7 +747,7 @@ export default function Dashboard() {
                 
                 {/* DATA QUALITY AUDIT VISUALIZATION */}
                 {(() => {
-                  const dq = metrics.deals?.missing_deal_value !== undefined ? metrics : null;
+                  const dq = metrics.data_quality;
                   if (!dq) return null;
                   
                   return (

@@ -220,7 +220,17 @@ export default function Dashboard() {
   return (
     <div className="w-screen h-screen bg-vanta text-ghost font-sans flex overflow-hidden">
       
-      {/* SIDEBAR */}
+      {/* LEFT PANE: Chat Console (Animates smoothly from 100vw to 35vw) */}
+      <motion.aside
+        initial={false}
+        animate={{
+          width: hasQueried ? "35%" : "100%",
+        }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }} // "Smooth as fuck" expo ease
+        className="h-full flex-shrink-0 border-r border-bordercol relative z-20 bg-vanta shadow-2xl flex justify-center"
+      >
+        <div className={`h-full flex w-full transition-all duration-1000 ${!hasQueried ? 'max-w-4xl' : ''}`}>
+          {/* SIDEBAR */}
       <motion.div
         initial={false}
         animate={{ width: sidebarOpen ? 260 : 0, opacity: sidebarOpen ? 1 : 0 }}
@@ -305,18 +315,13 @@ export default function Dashboard() {
       </motion.div>
 
       
-      {/* LEFT PANE: Chat Console (Animates smoothly from 100vw to 35vw) */}
-      <motion.aside
-        initial={false}
-        animate={{
-          width: hasQueried ? "35%" : "100%",
-        }}
-        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }} // "Smooth as fuck" expo ease
-        className="h-full flex-shrink-0 border-r border-bordercol relative z-20 bg-vanta shadow-2xl flex flex-col"
-      >
+      
+          {/* TERMINAL CHAT BOX */}
+          <div className={`flex-1 flex flex-col transition-all duration-1000 ${!hasQueried ? 'border-bordercol/40 bg-[#060608] border-y border-r' : ''}`}>
+
         {/* HEADER */}
         <header className="h-14 border-b border-bordercol flex-shrink-0 w-full flex justify-center">
-          <div className={`w-full max-w-3xl h-full flex items-center justify-between px-4 md:px-6 transition-all duration-1000 ${!hasQueried ? 'border-x border-bordercol/40 bg-[#060608]' : ''}`}>
+          <div className="w-full h-full flex items-center justify-between px-4 md:px-6">
             <div className="flex items-center gap-3">
               <button onClick={() => setSidebarOpen(!sidebarOpen)} className="mr-2 text-slateMuted hover:text-ghost transition-colors">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
@@ -334,7 +339,7 @@ export default function Dashboard() {
 
         {/* CHAT LOG */}
         <div className="flex-1 overflow-y-auto custom-scrollbar relative flex justify-center w-full">
-          <div className={`w-full max-w-3xl flex flex-col ${messages.length === 0 ? 'justify-center items-center' : 'justify-start'} min-h-full p-4 md:p-6 transition-all duration-1000 ${!hasQueried ? 'border-x border-bordercol/40 bg-[#060608]' : ''}`}>
+          <div className={`w-full flex flex-col ${messages.length === 0 ? 'justify-center items-center' : 'justify-start'} min-h-full p-4 md:p-6`}>
             
             {/* INITIAL BOOT SEQUENCE */}
             {!hasQueried && messages.length === 0 && (
@@ -422,6 +427,8 @@ export default function Dashboard() {
                 Exec
               </button>
             </form>
+          </div>
+        </div>
           </div>
         </div>
       </motion.aside>

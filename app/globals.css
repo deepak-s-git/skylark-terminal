@@ -71,3 +71,20 @@ body {
 .prose-chat blockquote { border-left: 3px solid #FF3B00; padding-left: 0.8rem; margin: 0.5rem 0; color: #A1A1AA; }
 .prose-chat code { background: rgba(255,255,255,0.05); padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.85em; }
 .prose-chat hr { border-color: #27272A; margin: 0.5rem 0; }
+
+
+/* BRUTALIST SCROLLBAR */
+::-webkit-scrollbar {
+  width: 12px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+  border-left: 2px solid #333333;
+}
+::-webkit-scrollbar-thumb {
+  background: #FF3B00;
+  border-left: 2px solid #000000;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #CCFF00;
+}

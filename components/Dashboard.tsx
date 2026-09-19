@@ -74,6 +74,7 @@ export default function Dashboard() {
   const [conversations, setConversations] = useState<ConversationHistory[]>([])
   const [activeConvId, setActiveConvId] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarView, setSidebarView] = useState<'main' | 'history' | 'prompts'>('main')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Initialize UUID
@@ -122,6 +123,12 @@ export default function Dashboard() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  
+  const handlePromptClick = (text: string) => {
+    setSidebarOpen(false)
+    handleSubmit(undefined, text)
+  }
+
   const startNewChat = () => {
     setActiveConvId(null)
     setMessages([])
@@ -157,11 +164,11 @@ export default function Dashboard() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
 
-  async function handleSubmit(e?: React.FormEvent) {
+  async function handleSubmit(e?: React.FormEvent, overrideText?: string) {
     e?.preventDefault()
     if (!input.trim() || loading) return
 
-    const text = input.trim()
+    const text = (overrideText || input).trim()
     setInput('')
     
     const userMsg = { id: Date.now().toString(), role: 'user', content: text }
@@ -173,9 +180,7 @@ export default function Dashboard() {
       const response = await sendMessage(text, history, userId, activeConvId || undefined)
       if (response.conversation_id) {
         setActiveConvId(response.conversation_id)
-        if (!activeConvId) {
-          getConversations(userId).then(setConversations)
-        }
+        getConversations(userId).then(setConversations)
       }
       
       const assistantMsg = {
@@ -222,28 +227,81 @@ export default function Dashboard() {
         className="h-full bg-[#050505] border-r border-bordercol flex-shrink-0 overflow-hidden flex flex-col z-50 relative"
       >
         <div className="p-4 border-b border-bordercol flex justify-between items-center w-[260px] flex-shrink-0">
-          <span className="font-mono text-xs text-ghost tracking-widest uppercase">History Log</span>
+          <span className="font-mono text-xs text-ghost tracking-widest uppercase">
+            {sidebarView === 'main' && "Menu // System"}
+            {sidebarView === 'history' && (
+               <button onClick={() => setSidebarView('main')} className="hover:text-chartreuse transition-colors">{'< Back // History'}</button>
+            )}
+            {sidebarView === 'prompts' && (
+               <button onClick={() => setSidebarView('main')} className="hover:text-vermilion transition-colors">{'< Back // Prompts'}</button>
+            )}
+          </span>
           <button onClick={() => setSidebarOpen(false)} className="text-slateMuted hover:text-vermilion">
              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
         </div>
-        <div className="p-4 w-[260px] flex-shrink-0">
-          <button onClick={startNewChat} className="w-full py-2 border border-chartreuse/50 bg-chartreuse/10 text-chartreuse font-mono text-xs uppercase tracking-widest hover:bg-chartreuse/20 transition-colors">
-            + New Terminal
-          </button>
-        </div>
-        <div className="flex-1 overflow-y-auto custom-scrollbar w-[260px]">
-          {conversations.map(c => (
-            <div 
-              key={c.id} 
-              onClick={() => loadConversation(c.id)}
-              className={`p-3 border-b border-bordercol/30 cursor-pointer hover:bg-titanium transition-colors ${activeConvId === c.id ? 'bg-titanium border-l-2 border-l-chartreuse' : ''}`}
-            >
-              <div className="font-mono text-[10px] text-ghost truncate">{c.title}</div>
-              <div className="font-mono text-[8px] text-darkMuted mt-1">{new Date(c.created_at).toLocaleDateString()}</div>
+        
+        {/* VIEW: MAIN MENU */}
+        {sidebarView === 'main' && (
+          <div className="p-4 w-[260px] flex flex-col gap-4">
+            <button onClick={() => setSidebarView('history')} className="group relative border border-bordercol bg-vanta p-4 hover:border-chartreuse transition-colors text-left flex flex-col gap-2 overflow-hidden">
+               <div className="absolute top-0 left-0 w-1 h-full bg-bordercol group-hover:bg-chartreuse transition-colors"></div>
+               <div className="font-mono text-xs text-ghost uppercase tracking-widest pl-2">Data Archive</div>
+               <div className="font-mono text-[9px] text-slateMuted pl-2">Access previous telemetry logs</div>
+            </button>
+            
+            <button onClick={() => setSidebarView('prompts')} className="group relative border border-bordercol bg-vanta p-4 hover:border-vermilion transition-colors text-left flex flex-col gap-2 overflow-hidden">
+               <div className="absolute top-0 left-0 w-1 h-full bg-bordercol group-hover:bg-vermilion transition-colors"></div>
+               <div className="font-mono text-xs text-ghost uppercase tracking-widest pl-2">Tactical Prompts</div>
+               <div className="font-mono text-[9px] text-slateMuted pl-2">Pre-configured operational queries</div>
+            </button>
+          </div>
+        )}
+
+        {/* VIEW: HISTORY */}
+        {sidebarView === 'history' && (
+          <>
+            <div className="p-4 w-[260px] flex-shrink-0 border-b border-bordercol/50">
+              <button onClick={startNewChat} className="w-full py-2 border border-chartreuse/50 bg-chartreuse/10 text-chartreuse font-mono text-xs uppercase tracking-widest hover:bg-chartreuse/20 transition-colors">
+                + New Terminal
+              </button>
             </div>
-          ))}
-        </div>
+            <div className="flex-1 overflow-y-auto custom-scrollbar w-[260px]">
+              {conversations.map(c => (
+                <div 
+                  key={c.id} 
+                  onClick={() => loadConversation(c.id)}
+                  className={`p-3 border-b border-bordercol/30 cursor-pointer hover:bg-titanium transition-colors ${activeConvId === c.id ? 'bg-titanium border-l-2 border-l-chartreuse' : ''}`}
+                >
+                  <div className="font-mono text-[10px] text-ghost truncate">{c.title}</div>
+                  <div className="font-mono text-[8px] text-darkMuted mt-1">{new Date(c.created_at).toLocaleDateString()}</div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* VIEW: PROMPTS */}
+        {sidebarView === 'prompts' && (
+          <div className="flex-1 overflow-y-auto custom-scrollbar w-[260px] p-4 flex flex-col gap-3">
+            {[
+              "Stop sugarcoating it and give me a brutal leadership update.",
+              "Analyze the revenue pipeline strictly for the Enterprise sector.",
+              "Run a complete data quality audit across both boards.",
+              "What is our cross-board conversion rate? Are we actually invoicing the deals sales claims we've won?"
+            ].map((prompt, i) => (
+              <button 
+                key={i}
+                onClick={() => handlePromptClick(prompt)}
+                className="group border border-bordercol bg-vanta p-3 hover:border-ghost transition-colors text-left"
+              >
+                <div className="font-mono text-[9px] text-slateMuted group-hover:text-ghost transition-colors leading-relaxed">
+                  "{prompt}"
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </motion.div>
 
       

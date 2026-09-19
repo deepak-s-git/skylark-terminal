@@ -131,6 +131,11 @@ def _run_analytics(intent: QueryIntent, deals_df: pd.DataFrame,
     
     baseline = generate_leadership_update(deals_df, wo_df, deals_quality, wo_quality)
     result = baseline.copy() # Start with the full dashboard data
+    
+    # ALWAYS inject data quality into the baseline so the dashboard is 100% full at all times
+    from analytics.engine import data_quality_summary
+    dq_specific = data_quality_summary(deals_quality, wo_quality)
+    result["result"]["data_quality"] = dq_specific["result"]
 
     # If the user asked a specific question, overwrite that specific section with filtered data
     if intent.intent == "pipeline_metrics":
@@ -149,9 +154,7 @@ def _run_analytics(intent: QueryIntent, deals_df: pd.DataFrame,
         specific = cross_board_conversion(deals_df, wo_df, sector=sector)
         result["result"]["cross_board"] = specific["result"]
     elif intent.intent == "data_quality":
-        specific = data_quality_summary(deals_quality, wo_quality)
-        # We must attach deals and work_orders quality data to the result
-        result["result"]["data_quality"] = specific["result"]
+        pass # Already attached globally above
 
     caveats = result.get("metadata", {}).get("caveats", [])
     return result, caveats

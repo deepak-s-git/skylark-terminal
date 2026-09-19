@@ -405,29 +405,27 @@ export default function Dashboard() {
         </div>
 
         {/* INPUT AREA */}
-        <div className="border-t border-bordercol bg-vanta flex-shrink-0 flex justify-center w-full">
-          <div className={`w-full max-w-3xl p-4 md:p-6 transition-all duration-1000 ${!hasQueried ? 'border-x border-bordercol/40 bg-[#060608]' : ''}`}>
-            <form onSubmit={handleSubmit} className="relative flex items-center">
-              <div className="absolute left-4 font-mono text-slateMuted text-xs select-none pointer-events-none">
-                <span className="text-vermilion animate-pulse">_</span>&gt;
-              </div>
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Give me a leadership update..."
-                className="w-full bg-vanta border border-bordercol text-ghost font-mono text-xs md:text-sm py-4 pl-12 pr-24 focus:outline-none focus:border-slateMuted transition-colors placeholder:text-darkMuted"
-                disabled={loading}
-              />
-              <button 
-                type="submit" 
-                disabled={loading || !input.trim()}
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-vermilion hover:bg-vermilion/80 text-vanta font-mono text-[10px] md:text-xs font-bold uppercase tracking-widest py-2 px-4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Exec
-              </button>
-            </form>
-          </div>
+        <div className="border-t border-bordercol flex-shrink-0 flex items-center p-4 md:p-6 w-full">
+          <form onSubmit={handleSubmit} className="w-full relative flex items-center">
+            <div className="absolute left-4 font-mono text-slateMuted text-xs select-none pointer-events-none">
+              <span className="text-vermilion animate-pulse">_</span>&gt;
+            </div>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Give me a leadership update..."
+              className="w-full bg-vanta border border-bordercol text-ghost font-mono text-xs md:text-sm py-4 pl-12 pr-24 focus:outline-none focus:border-slateMuted transition-colors placeholder:text-darkMuted"
+              disabled={loading}
+            />
+            <button 
+              type="submit" 
+              disabled={loading || !input.trim()}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-vermilion hover:bg-vermilion/80 text-vanta font-mono text-[10px] md:text-xs font-bold uppercase tracking-widest py-2 px-4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Exec
+            </button>
+          </form>
         </div>
           </div>
         </div>

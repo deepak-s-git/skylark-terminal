@@ -710,7 +710,7 @@ export default function Dashboard() {
 
                 {/* FINANCIAL OPERATIONS / PRIMARY CONTROLLERS */}
                 {(() => {
-                  const wo = metrics.work_orders || (metrics.total_contract !== undefined ? metrics : null);
+                  const wo = metrics.work_orders?.total_contract !== undefined ? metrics.work_orders : (metrics.total_contract !== undefined ? metrics : null);
                   if (!wo) return null;
                   
                   return (
@@ -744,6 +744,69 @@ export default function Dashboard() {
                   );
                 })()}
 
+                
+                {/* DATA QUALITY AUDIT VISUALIZATION */}
+                {(() => {
+                  const dq = metrics.deals?.missing_deal_value !== undefined ? metrics : null;
+                  if (!dq) return null;
+                  
+                  return (
+                    <div className="bento-card col-span-1 xl:col-span-3 bg-titanium relative border-2 border-bordercol border-t-sun p-5 md:p-6 group hover:border-sun transition-colors">
+                      <div className="flex justify-between items-start mb-6">
+                        <h2 className="font-mono text-[10px] text-slateMuted tracking-widest uppercase flex items-center gap-2">
+                          <span className="w-1 h-1 bg-sun"></span> DATA HYGIENE AUDIT
+                        </h2>
+                        <span className="text-[9px] text-sun font-mono uppercase bg-sun/10 px-2 py-1">Cross-Board Scan Complete</span>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Deals Quality */}
+                        <div className="border border-bordercol bg-vanta p-4">
+                          <div className="font-mono text-xs text-ghost uppercase mb-4 border-b border-bordercol pb-2">Sales Pipeline (Deals)</div>
+                          <div className="flex justify-between items-end mb-2">
+                            <span className="text-[9px] text-darkMuted font-mono uppercase">Total Records</span>
+                            <span className="text-sm font-mono text-ghost">{dq.deals.total_records}</span>
+                          </div>
+                          <div className="flex justify-between items-end mb-2">
+                            <span className="text-[9px] text-vermilion font-mono uppercase">Missing Deal Value</span>
+                            <span className="text-sm font-mono text-vermilion font-bold">{dq.deals.missing_deal_value} <span className="text-[9px]">({Math.round((dq.deals.missing_deal_value/dq.deals.total_records)*100)}%)</span></span>
+                          </div>
+                          <div className="flex justify-between items-end">
+                            <span className="text-[9px] text-sun font-mono uppercase">Missing Close Date</span>
+                            <span className="text-sm font-mono text-sun">{dq.deals.missing_close_date}</span>
+                          </div>
+                          
+                          <div className="mt-4 pt-3 border-t border-bordercol/30 w-full bg-bordercol/20 h-2 flex overflow-hidden">
+                            <div className="bg-vermilion h-full" style={{ width: `${(dq.deals.missing_deal_value/dq.deals.total_records)*100}%` }}></div>
+                            <div className="bg-chartreuse h-full" style={{ width: `${100 - (dq.deals.missing_deal_value/dq.deals.total_records)*100}%` }}></div>
+                          </div>
+                        </div>
+
+                        {/* Work Orders Quality */}
+                        <div className="border border-bordercol bg-vanta p-4">
+                          <div className="font-mono text-xs text-ghost uppercase mb-4 border-b border-bordercol pb-2">Operations (Work Orders)</div>
+                          <div className="flex justify-between items-end mb-2">
+                            <span className="text-[9px] text-darkMuted font-mono uppercase">Total Records</span>
+                            <span className="text-sm font-mono text-ghost">{dq.work_orders.total_records}</span>
+                          </div>
+                          <div className="flex justify-between items-end mb-2">
+                            <span className="text-[9px] text-vermilion font-mono uppercase">Missing Sector</span>
+                            <span className="text-sm font-mono text-ghost">{dq.work_orders.missing_sector}</span>
+                          </div>
+                          <div className="flex justify-between items-end">
+                            <span className="text-[9px] text-sun font-mono uppercase">Missing Exec Status</span>
+                            <span className="text-sm font-mono text-ghost">{dq.work_orders.missing_execution_status}</span>
+                          </div>
+                          <div className="mt-4 pt-3 border-t border-bordercol/30 w-full bg-bordercol/20 h-2 flex overflow-hidden">
+                            <div className="bg-vermilion h-full" style={{ width: `${((dq.work_orders.missing_sector + dq.work_orders.missing_execution_status)/dq.work_orders.total_records)*100}%` }}></div>
+                            <div className="bg-chartreuse h-full" style={{ width: `${100 - ((dq.work_orders.missing_sector + dq.work_orders.missing_execution_status)/dq.work_orders.total_records)*100}%` }}></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+                
                 {/* Dynamic Quality Report Warning */}
                 {qualityReport && qualityReport.issues.length > 0 && (
                   <div className="bento-card col-span-1 hazard-stripe border border-vermilion p-1">

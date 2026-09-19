@@ -166,9 +166,11 @@ export default function Dashboard() {
 
   async function handleSubmit(e?: React.FormEvent, overrideText?: string) {
     e?.preventDefault()
-    if (!input.trim() || loading) return
+    
+    const textToSubmit = overrideText || input
+    if (!textToSubmit.trim() || loading) return
 
-    const text = (overrideText || input).trim()
+    const text = textToSubmit.trim()
     setInput('')
     
     const userMsg = { id: Date.now().toString(), role: 'user', content: text }

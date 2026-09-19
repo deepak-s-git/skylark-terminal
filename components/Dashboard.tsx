@@ -237,7 +237,7 @@ export default function Dashboard() {
         className="h-full bg-[#050505] border-r border-bordercol flex-shrink-0 overflow-hidden flex flex-col z-50 relative"
       >
         <div className="p-4 border-b border-bordercol flex justify-between items-center w-[260px] flex-shrink-0">
-          <span className="font-mono text-xs bg-ghost text-vanta px-2 py-1 tracking-widest uppercase font-bold">
+          <span className="font-mono text-xs text-ghost tracking-widest uppercase">
             {sidebarView === 'main' && "Menu // System"}
             {sidebarView === 'history' && (
                <button onClick={() => setSidebarView('main')} className="hover:text-chartreuse transition-colors">{'< Back // History'}</button>
@@ -254,15 +254,15 @@ export default function Dashboard() {
         {/* VIEW: MAIN MENU */}
         {sidebarView === 'main' && (
           <div className="p-4 w-[260px] flex flex-col gap-4">
-            <button onClick={() => setSidebarView('history')} className="group relative border-2 border-chartreuse bg-chartreuse/5 p-4 hover:bg-chartreuse hover:text-vanta transition-all text-left flex flex-col gap-2 overflow-hidden">
+            <button onClick={() => setSidebarView('history')} className="group relative border border-bordercol border-l-2 border-l-chartreuse bg-gradient-to-r from-chartreuse/5 to-transparent p-4 hover:bg-chartreuse/10 transition-colors text-left flex flex-col gap-2 overflow-hidden">
                <div className="absolute top-0 left-0 w-1 h-full bg-bordercol group-hover:bg-chartreuse transition-colors"></div>
-               <div className="font-mono text-xs text-ghost uppercase tracking-widest pl-2">Data Archive</div>
+               <div className="font-mono text-xs text-chartreuse uppercase tracking-widest pl-2">Data Archive</div>
                <div className="font-mono text-[9px] text-slateMuted pl-2">Access previous telemetry logs</div>
             </button>
             
-            <button onClick={() => setSidebarView('prompts')} className="group relative border-2 border-vermilion bg-vermilion/5 p-4 hover:bg-vermilion hover:text-vanta transition-all text-left flex flex-col gap-2 overflow-hidden">
+            <button onClick={() => setSidebarView('prompts')} className="group relative border border-bordercol border-l-2 border-l-vermilion bg-gradient-to-r from-vermilion/5 to-transparent p-4 hover:bg-vermilion/10 transition-colors text-left flex flex-col gap-2 overflow-hidden">
                <div className="absolute top-0 left-0 w-1 h-full bg-bordercol group-hover:bg-vermilion transition-colors"></div>
-               <div className="font-mono text-xs text-ghost uppercase tracking-widest pl-2">Tactical Prompts</div>
+               <div className="font-mono text-xs text-vermilion uppercase tracking-widest pl-2">Tactical Prompts</div>
                <div className="font-mono text-[9px] text-slateMuted pl-2">Pre-configured operational queries</div>
             </button>
           </div>
@@ -272,7 +272,7 @@ export default function Dashboard() {
         {sidebarView === 'history' && (
           <>
             <div className="p-4 w-[260px] flex-shrink-0 border-b border-bordercol/50">
-              <button onClick={startNewChat} className="w-full py-3 border-2 border-chartreuse bg-chartreuse text-vanta font-bold font-mono text-xs uppercase tracking-widest hover:bg-vanta hover:text-chartreuse transition-colors">
+              <button onClick={startNewChat} className="w-full py-2 border border-chartreuse/50 bg-chartreuse/10 text-chartreuse font-mono text-xs uppercase tracking-widest hover:bg-chartreuse/20 transition-colors">
                 + New Terminal
               </button>
             </div>
@@ -303,9 +303,9 @@ export default function Dashboard() {
               <button 
                 key={i}
                 onClick={() => handlePromptClick(prompt)}
-                className="group border-2 border-ghost bg-vanta p-3 hover:bg-ghost transition-colors text-left"
+                className="group border border-bordercol bg-vanta p-3 hover:border-ghost transition-colors text-left"
               >
-                <div className="font-mono text-[9px] text-ghost group-hover:text-vanta font-bold transition-colors leading-relaxed uppercase">
+                <div className="font-mono text-[9px] text-slateMuted group-hover:text-ghost transition-colors leading-relaxed">
                   "{prompt}"
                 </div>
               </button>
@@ -327,7 +327,7 @@ export default function Dashboard() {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
               </button>
               <div className="w-2 h-2 bg-vermilion rounded-sm animate-pulse"></div>
-              <h1 className="font-mono text-[10px] md:text-xs font-bold tracking-widest bg-ghost text-vanta px-2 py-1 uppercase">SKYLARK // TERMINAL</h1>
+              <h1 className="font-mono text-[10px] md:text-xs font-bold tracking-widest text-ghost uppercase">Skylark // Terminal</h1>
             </div>
             <div className="flex items-center gap-2">
               <span className="font-mono text-[8px] md:text-[9px] text-chartreuse border border-chartreuse/30 bg-chartreuse/10 px-2 py-0.5 uppercase tracking-wider">
@@ -408,7 +408,7 @@ export default function Dashboard() {
         <div className="border-t border-bordercol bg-vanta flex-shrink-0 flex items-center w-full h-20 md:h-24">
           <form onSubmit={handleSubmit} className="w-full h-full relative flex items-center">
             <div className="absolute left-4 md:left-6 font-mono text-slateMuted text-xs select-none pointer-events-none">
-              <span className="text-vermilion animate-pulse font-bold text-sm">_</span><span className="text-vermilion font-bold text-sm">&gt;</span>
+              <span className="text-vermilion animate-pulse">_</span>&gt;
             </div>
             <input
               type="text"
@@ -421,7 +421,7 @@ export default function Dashboard() {
             <button 
               type="submit" 
               disabled={loading || !input.trim()}
-              className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 bg-vermilion border-2 border-vermilion hover:bg-vanta hover:text-vermilion text-vanta font-mono text-[10px] md:text-xs font-bold uppercase tracking-widest py-2 px-6 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 bg-vermilion text-vanta hover:bg-vanta hover:text-vermilion border border-transparent hover:border-vermilion font-mono text-[10px] md:text-xs font-bold uppercase tracking-widest py-2 px-4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Exec
             </button>
@@ -565,7 +565,7 @@ export default function Dashboard() {
                   const maxVal = Math.max(...validSectors.map((s:any) => s.value || s.revenue_inr || 0));
                   
                   return (
-                    <div className="bento-card col-span-1 xl:col-span-1 bg-titanium relative border-2 border-bordercol border-t-ghost p-5 md:p-6 group hover:border-ghost transition-colors flex flex-col justify-between">
+                    <div className="bento-card col-span-1 xl:col-span-1 bg-titanium relative border border-bordercol p-5 md:p-6 group hover:border-slateMuted transition-colors flex flex-col justify-between">
                       <GlowingEffect spread={40} glow={true} disabled={false} proximity={64} inactiveZone={0.01} />
                       <div className="flex justify-between items-start mb-6">
                         <h2 className="font-mono text-[10px] text-slateMuted tracking-widest uppercase flex items-center gap-2">
@@ -600,7 +600,7 @@ export default function Dashboard() {
                   if (!pipe?.by_stage || pipe.by_stage.length === 0) return null;
                   
                   return (
-                    <div className="bento-card col-span-1 xl:col-span-2 bg-titanium relative border-2 border-bordercol border-t-chartreuse p-5 md:p-6 group hover:border-chartreuse transition-colors">
+                    <div className="bento-card col-span-1 xl:col-span-2 bg-titanium relative border border-bordercol p-5 md:p-6 group hover:border-slateMuted transition-colors">
                       <GlowingEffect spread={40} glow={true} disabled={false} proximity={64} inactiveZone={0.01} />
                       <div className="flex justify-between items-start mb-6">
                         <h2 className="font-mono text-[10px] text-slateMuted tracking-widest uppercase flex items-center gap-2">
@@ -676,7 +676,7 @@ export default function Dashboard() {
                   if (!pipe && !rev) return null;
                   
                   return (
-                    <div className="bento-card col-span-1 xl:col-span-1 bg-titanium relative border-2 border-bordercol border-t-ghost p-5 md:p-6 group hover:border-ghost transition-colors flex flex-col justify-between">
+                    <div className="bento-card col-span-1 xl:col-span-1 bg-titanium relative border border-bordercol p-5 md:p-6 group hover:border-slateMuted transition-colors flex flex-col justify-between">
                       <GlowingEffect spread={40} glow={true} disabled={false} proximity={64} inactiveZone={0.01} />
                       <div className="flex justify-between items-start mb-6">
                         <h2 className="font-mono text-[10px] text-slateMuted tracking-widest uppercase flex items-center gap-2">
@@ -712,7 +712,7 @@ export default function Dashboard() {
                   if (!wo) return null;
                   
                   return (
-                    <div className="bento-card col-span-1 xl:col-span-3 bg-titanium relative border-2 border-bordercol border-t-vermilion p-5 md:p-6 group hover:border-vermilion transition-colors">
+                    <div className="bento-card col-span-1 xl:col-span-3 bg-titanium relative border border-bordercol p-5 md:p-6 group hover:border-slateMuted transition-colors">
                       <GlowingEffect spread={40} glow={true} disabled={false} proximity={64} inactiveZone={0.01} />
                       <div className="flex justify-between items-start mb-6">
                         <h2 className="font-mono text-[10px] text-slateMuted tracking-widest uppercase flex items-center gap-2">
